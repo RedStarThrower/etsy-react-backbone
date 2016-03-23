@@ -39,7 +39,72 @@ import React, {Component} from 'react'
 function app() {
     // start app
     // new Router()
-    DOM.render(<p>test 2</p>, document.querySelector('.container'))
-}
+    var AppView = React.createClass ({
+
+  //   	componentWillMount: function(){
+		// 	var self = this
+
+		// 	this.props.articles.on('sync',function() {self.forceUpdate()})
+		// },
+
+    	render: function() {
+    		console.log("rendering etsy app")
+    		return (
+    			<div className="etsyContainer">
+    				{/*<Header />*/}
+    				<ListingGrid listingData={this.props} />
+    			</div>
+    		)
+    	}
+    })
+
+    var ListingGrid = React.createClass({
+    	render: function() {
+    		console.log(this)
+    	}
+    })
+
+    // var Listing = React.createClass({
+
+    // })
+
+    var ListModel = Backbone.Model.extend({
+    	_apiKey: apiKey,
+    	url: "https://openapi.etsy.com/v2/listings/active.js?"
+    })
+
+    var EtsyRouter = Backbone.Router.extend({
+
+     routes: {
+         "home": "handleListView",
+         // "details/:id": "handleDetailView",
+         // "search/:keywords": "handleSearchView",
+         "*default": "handleListView"
+     },
+
+     handleListView: function() {
+     	var listModel = new ListModel()
+     	var promise = listModel.fetch({
+     		dataType: "jsonp",
+            data: {
+            	includes: "Images,Shop",
+            	api_key: listModel._apiKey
+        	}
+
+     	})
+        promise.then(function(jsonData) {console.log(jsonData)})
+     	
+     	DOM.render(<AppView etsyData={listModel}/>, document.querySelector('.container'))
+     },
+
+     initialize: function() {
+			Backbone.history.start()
+	 }
+
+
+	})
+
+	var router = new EtsyRouter()
+}	
 
 app()

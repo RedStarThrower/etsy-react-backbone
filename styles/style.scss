@@ -127,3 +127,182 @@ body {
 /**
  * App code
  */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-size: 12px;
+    font-family: "Graphik Web", "Arial", "Helvetica", sans-serif;
+    background-color: #E7E9E8;
+}
+
+#main-header {
+    position: relative;
+    width: 100%;
+    text-align: left;
+    margin-bottom: 0;
+    background-color: white;
+    border-bottom: 1px solid #CFCBC8;
+}
+
+#nav-header {
+    position: relative;
+    width: 100%;
+    text-align: left;
+    margin-top: 0;
+    background-color: white;
+    border-bottom: 1px solid #CFCBC8;
+    border-top: 1px solid #CFCBC8;
+}
+
+ul {
+    margin: 0;
+}
+
+.tab {
+    font-size: 15px;
+    color: #9A9A9A;
+    display: inline-block;
+    vertical-align: baseline;
+    background: transparent;
+    margin-right: 12px;
+    cursor: pointer;
+    margin-left: 3%;
+    line-height: 50px;
+}
+
+#etsy-logo {
+    position: relative;
+    display: inline-block;
+    width: 70px;
+    left: 11%;   
+    vertical-align: middle; 
+}
+
+#logo {
+    padding-top: 10px;
+    width: 90px;
+    padding-right: 15px;
+}
+.search-el {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle; 
+    border: 1px solid #CFCBC8;
+    background: #f9f9f8;
+    padding: 6px 10px;
+    margin-left: 0;
+    height: 34px;
+    width: 250px;
+    font-size: 14px;
+    outline: none;
+    box-shadow: inset 0 1px 2px #E9E9E8, 0 0 0 1000px #fbfbfa inset;
+    color: #333;
+    white-space: nowrap;
+    margin-left: 13%;
+}
+
+#main-container {
+    width: 100%;
+    margin-left: 3%;
+}
+
+.listing {
+    position: relative;
+    background-color: white;
+    display: inline-block;
+    border: 1px solid #CFCBC8;
+    vertical-align: top;
+    width: 240px;
+    margin: 1%;
+    border-radius: 5px;
+    box-shadow: 0 1px 2px #E9E9E8;
+}
+
+.home-image img {
+    width: 100%;
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+
+.title-data {
+    font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    padding-left: 5px;
+}
+
+.title {
+    margin: 0;
+}
+
+.seller-data {
+    font-size: 12px;
+    color: #9A9A9A;
+    padding-left: 5px;
+    width: 100%;
+}
+
+.seller {
+    display: inline-block;
+    margin-top: 7px;
+    width: 50%;
+}
+
+.price {
+    position: relative;
+    font-size: 12px;
+    display: inline-block;
+    color: #78c042;
+    width: 47%;
+    text-align: right;
+}
+
+.detail-listing {
+    display: inline-block;
+    position: relative;
+    background-color: white;
+    padding-top: 20px;
+    padding-left: 40px;
+    padding-right: 20px;
+    display: inline-block;
+    border: 1px solid #CFCBC8;
+    vertical-align: top;
+    width: 650px;
+    margin: 2% 25%;
+    border-radius: 5px;
+    box-shadow: 0 1px 2px #E9E9E8;
+}
+
+.detail-title-data {
+    font-size: 20px;
+}
+
+.detail-description-d   ata {
+    font-size: 14px;
+    padding-top: 10px;
+}
+
+.detail-seller {
+    display: inline-block;
+    font-size: 20px;
+    color: #9A9A9A;
+    margin: 0;
+    width: 50%;
+
+}
+
+.detail-price {
+    position: relative;
+    font-size: 20px;
+    display: inline-block;
+    color: #78c042;
+    width: 47%;
+    text-align: right;
+}
+
+
+ 

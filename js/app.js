@@ -49,10 +49,10 @@ function app() {
 
     	render: function() {
     		console.log("rendering etsy app")
-            //console.log(this)
+            console.log(this.props.etsyData)
     		return (
     			<div className="etsyContainer">
-    				{/*<Header />*/}
+                    <Header />
     				<ListingsGrid listingData={this.props} />
        			</div>
     		)
@@ -67,16 +67,47 @@ function app() {
             },
 
         render: function() {
-            console.log("rendering etsy app")
+            //console.log("rendering etsy app")
             //console.log(this)
             return (
                 <div className="etsyContainer">
-                    {/*<Header />*/}
+                    <Header />
                     <DetailPage detailData={this.props} />
                 </div>
             )
         }
     })
+
+    var Header = React.createClass({
+        render: function(){
+            return (
+                <div className="main-header">
+                    <div className="etsy-logo"><img id="logo" src="./images/etsy-logo.jpg" /></div>
+                    <div className="search-el">
+                        <SearchBar/>
+                    </div>
+                </div>
+            )
+
+        } 
+    })
+
+    var SearchBar = React.createClass({
+        
+        _search: function(keyEvent) {
+            if (keyEvent.keyCode === 13) {
+                location.hash = `search/${keyEvent.target.value}`
+                keyEvent.target.value = ''
+            }
+        },
+
+        render: function() {
+            return (
+                <input onKeyDown={this._search} />
+                )
+        }
+    })
+
 
     var ListingsGrid = React.createClass({
 
@@ -112,7 +143,7 @@ function app() {
         //console.log(this)
         var listingObj = this.props.listing
         //console.log(listingObj)
-        var imgSrc = "../dist/images/placeholder.png"
+        var imgSrc = "./images/placeholder.png"
         if(listingObj.Images.length > 0) {
             imgSrc = listingObj.Images[0].url_170x135
         }
@@ -160,7 +191,7 @@ function app() {
         render: function() {
             //console.log(this)
             var detailObj = this.props.listing
-            var imgSrc = "../dist/images/placeholder.png"
+            var imgSrc = "./images/placeholder.png"
             if(detailObj.Images.length > 0) {
                 imgSrc = detailObj.Images[0].url_570xN
             }
@@ -200,17 +231,17 @@ function app() {
      routes: {
          "home": "handleListView",
          "details/:id": "handleDetailView",
-         // "search/:keywords": "handleSearchView",
+         "search/:keywords": "handleSearchView",
           "*default": "handleListView"
      },
 
      handleListView: function() {
-     	var listModel = new ListModel()
-     	var promise = listModel.fetch({
+     	this.multiModel = new ListModel()
+     	this.multiModel.fetch({
      		dataType: "jsonp",
             data: {
             	includes: "Images,Shop",
-            	api_key: listModel._apiKey
+            	api_key: this.multiModel._apiKey
         	}
 
      	})
@@ -218,7 +249,7 @@ function app() {
        //      console.log(jsonData)
        // })
      	
-     	DOM.render(<ListingView etsyData={listModel}/>, document.querySelector('.container'))
+     	DOM.render(<ListingView etsyData={this.multiModel}/>, document.querySelector('.container'))
      },
 
      handleDetailView: function(listingId) {
@@ -238,6 +269,19 @@ function app() {
             // })
             DOM.render(<DetailView etsyData={detailModel}/>, document.querySelector('.container'))
 
+     },
+
+     handleSearchView: function(keywords) {
+        this.multiModel = new ListModel()
+        this.multiModel.fetch({
+             dataType: "jsonp",
+             data: {
+                 keywords: keywords,
+                 includes: "Images,Shop",
+                 api_key: this.multiModel._apiKey
+             }
+         })
+        DOM.render(<ListingView etsyData={this.multiModel}/>, document.querySelector('.container'))
      },
 
      initialize: function() {

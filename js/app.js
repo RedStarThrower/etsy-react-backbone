@@ -40,25 +40,45 @@ import Backbone from 'backbone'
 function app() {
     // start app
     // new Router()
-    var AppView = React.createClass ({
+    var ListingView = React.createClass ({
 
     	componentWillMount: function(){
-        	var self = this
+            var self = this
 			this.props.etsyData.on('sync',function() {self.forceUpdate()})
-		},
+            },
 
     	render: function() {
     		console.log("rendering etsy app")
+            //console.log(this)
     		return (
     			<div className="etsyContainer">
     				{/*<Header />*/}
-    				<ListingGrid listingData={this.props} />
-    			</div>
+    				<ListingsGrid listingData={this.props} />
+       			</div>
     		)
     	}
     })
 
-    var ListingGrid = React.createClass({
+    var DetailView = React.createClass ({
+
+        componentWillMount: function(){
+            var self = this
+            this.props.etsyData.on('sync',function() {self.forceUpdate()})
+            },
+
+        render: function() {
+            console.log("rendering etsy app")
+            //console.log(this)
+            return (
+                <div className="etsyContainer">
+                    {/*<Header />*/}
+                    <DetailPage detailData={this.props} />
+                </div>
+            )
+        }
+    })
+
+    var ListingsGrid = React.createClass({
 
         _getDataJsx: function(resultsObj) {
             //console.log(resultsObj)
@@ -83,10 +103,15 @@ function app() {
     })
 
     var Listing = React.createClass({
+
+        _triggerDetailView: function() {
+            location.hash = "details/" + this.props.listing.listing_id
+        },
+
         render: function() {
         //console.log(this)
         var listingObj = this.props.listing
-        console.log(listingObj)
+        //console.log(listingObj)
         var imgSrc = "../dist/images/placeholder.png"
         if(listingObj.Images.length > 0) {
             imgSrc = listingObj.Images[0].url_170x135
@@ -94,7 +119,7 @@ function app() {
             return(
                 <div className="listing">
                     <div className="home-image">
-                        <img listingId={listingObj.listing_id}src={imgSrc} />
+                        <img onClick={this._triggerDetailView} src={imgSrc} />
                     </div>
                     <div className="title-data"><p className="title">{listingObj.title}</p></div>
                     <div className="seller-data"><p className="seller">{listingObj.Shop.shop_name}</p>
@@ -103,6 +128,52 @@ function app() {
                 </div>
             )
             
+        }
+    })
+
+    var DetailPage = React.createClass({
+
+        _getDetailDataJsx: function(resultsObj) {
+            //console.log(resultsObj)
+            var jsxArray = []
+            for (var prop in resultsObj) {
+                var component = <Detail key={resultsObj[prop].listing_id} listing={resultsObj[prop]}/>
+                jsxArray.push(component)
+            }
+        
+            //console.log(jsxArray)            
+            return jsxArray   
+        },
+
+        render: function() {
+            //console.log(this)
+            return (
+                <div className="detailContainer">
+                {this._getDetailDataJsx(this.props.detailData.etsyData.attributes)}
+                </div>
+            )
+        }
+
+    })
+
+    var Detail = React.createClass({
+        render: function() {
+            //console.log(this)
+            var detailObj = this.props.listing
+            var imgSrc = "../dist/images/placeholder.png"
+            if(detailObj.Images.length > 0) {
+                imgSrc = detailObj.Images[0].url_570xN
+            }
+
+            return(
+                <div className="detail-listing">
+                    <div className="detail-title-data"><p className="detail-title">{detailObj.title}</p></div>
+                    <div className="detail-image"><img src={imgSrc}></img></div>
+                    <div className="detail-description-data"><p className="detail-description">{detailObj.description}</p></div>
+                    <div className="detail-seller-data"><p className="detail-seller">{detailObj.Shop.shop_name}</p>
+                        <p className="detail-price">{detailObj.price}</p></div>              
+                </div>
+            )
         }
     })
 
@@ -115,13 +186,22 @@ function app() {
         }
     })
 
-    var EtsyRouter = Backbone.Router.extend({
+     var DetailModel = Backbone.Model.extend({
+        _apiKey: "aavnvygu0h5r52qes74x9zvo",
+         url: "https://openapi.etsy.com/v2/listings/",
+
+         parse: function(rawJSON) {
+            return rawJSON.results
+        }
+    }) 
+
+     var EtsyRouter = Backbone.Router.extend({
 
      routes: {
          "home": "handleListView",
-         // "details/:id": "handleDetailView",
+         "details/:id": "handleDetailView",
          // "search/:keywords": "handleSearchView",
-         "*default": "handleListView"
+          "*default": "handleListView"
      },
 
      handleListView: function() {
@@ -134,19 +214,37 @@ function app() {
         	}
 
      	})
-        //promise.then(function(jsonData) {
-            //console.log(jsonData)
+       //  promise.then(function(jsonData) {
+       //      console.log(jsonData)
        // })
      	
-     	DOM.render(<AppView etsyData={listModel}/>, document.querySelector('.container'))
+     	DOM.render(<ListingView etsyData={listModel}/>, document.querySelector('.container'))
+     },
+
+     handleDetailView: function(listingId) {
+        var detailModel = new DetailModel()
+        //console.log(detailModel)
+        detailModel.url += listingId + ".js?"
+        //console.log(detailModel.url)
+        var promise = detailModel.fetch({
+             dataType: "jsonp",
+             data: {
+                 includes: "Images,Shop",
+                 api_key: detailModel._apiKey
+             }
+         })
+            // promise.then(function(jsonData) {
+            //     console.log(jsonData)
+            // })
+            DOM.render(<DetailView etsyData={detailModel}/>, document.querySelector('.container'))
+
      },
 
      initialize: function() {
-			Backbone.history.start()
+        Backbone.history.start()
 	 }
 
-
-	})
+ })
 
 	var router = new EtsyRouter()
 }	

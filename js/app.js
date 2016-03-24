@@ -52,8 +52,8 @@ function app() {
         },
 
     	render: function() {
-    		console.log("rendering etsy app")
-            console.log(this.props.etsyData)
+    		//console.log("rendering etsy app")
+            //console.log(this.props.etsyData)
     		return (
     			<div className="etsyContainer">
                     <Header />
@@ -155,11 +155,13 @@ function app() {
         render: function() {
         //console.log(this)
         var listingObj = this.props.listing
-        //console.log(listingObj)
         var imgSrc = "./images/placeholder.png"
-        console.log(listingObj)
+        //console.log(listingObj)
         if(listingObj.Images.length > 0) {
             imgSrc = listingObj.Images[0].url_170x135
+        }
+        if(listingObj.state === "removed") {
+            return(<div></div>)
         }
             return(
                 <div className="listing">

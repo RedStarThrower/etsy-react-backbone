@@ -150,7 +150,7 @@ body {
 .nav-header {
     position: relative;
     width: 100%;
-    text-align: left;
+    text-align: center;
     margin-top: 0;
     background-color: white;
     border-bottom: 1px solid #CFCBC8;
@@ -159,10 +159,11 @@ body {
 
 ul {
     margin: 0;
+    max-width: 200ch;
 }
 
 .tab {
-    font-size: 15px;
+    font-size: 17px;
     color: #9A9A9A;
     display: inline-block;
     vertical-align: baseline;
@@ -176,15 +177,13 @@ ul {
 .etsy-logo {
     position: relative;
     display: inline-block;
-    width: 70px;
-    left: 11%;   
+    width: 100px;
+    left: 10%;   
     vertical-align: middle; 
 }
 
 #logo {
     padding-top: 10px;
-    width: 90px;
-    padding-right: 15px;
 }
 .search-el {
     position: relative;
@@ -193,7 +192,6 @@ ul {
     border: 1px solid #CFCBC8;
     background: #f9f9f8;
     padding: 6px 10px;
-    margin-left: 0;
     height: 34px;
     width: 250px;
     font-size: 14px;
@@ -201,12 +199,13 @@ ul {
     box-shadow: inset 0 1px 2px #E9E9E8, 0 0 0 1000px #fbfbfa inset;
     color: #333;
     white-space: nowrap;
-    margin-left: 13%;
+    margin-left: 11.5%;
+
 }
 
-#main-container {
-    width: 100%;
-    margin-left: 3%;
+.listingGrid {
+    width: 90%;
+    margin: auto;
 }
 
 .listing {
@@ -215,7 +214,7 @@ ul {
     display: inline-block;
     border: 1px solid #CFCBC8;
     vertical-align: top;
-    width: 240px;
+    width: 280px;
     margin: 1%;
     border-radius: 5px;
     box-shadow: 0 1px 2px #E9E9E8;
@@ -302,6 +301,24 @@ ul {
     color: #78c042;
     width: 47%;
     text-align: right;
+}
+
+@media (max-width: 770px) {
+    .listing {
+            width: 80%;
+            display: block;
+            margin: 25px auto; 
+        },
+
+     .tab {
+        font-size: 25px;
+     },
+
+     .detail-listing {
+        width: 95%;
+        display: block;
+        margin: auto;
+    }  
 }
 
 

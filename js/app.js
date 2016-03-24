@@ -45,7 +45,11 @@ function app() {
     	componentWillMount: function(){
             var self = this
 			this.props.etsyData.on('sync',function() {self.forceUpdate()})
-            },
+        },
+
+        componentWillUnmount: function() {
+            this.props.etsyData.off('sync')
+        },
 
     	render: function() {
     		console.log("rendering etsy app")
@@ -82,10 +86,20 @@ function app() {
         render: function(){
             return (
                 <div className="main-header">
-                    <div className="etsy-logo"><img id="logo" src="./images/etsy-logo.jpg" /></div>
-                    <div className="search-el">
+                    <a href="#home"><div className="etsy-logo"><img id="logo" src="./images/etsy-logo.jpg" /></div></a>         
                         <SearchBar/>
-                    </div>
+                    <header className="nav-header">
+                        <ul>
+                        <a href="#search/clothing accessories"><li className="tab">Clothing & Accessories</li></a>
+                        <a href="#search/jewelry"><li className="tab">Jewelry</li></a>
+                        <a href="#search/craft supplies"><li className="tab">Craft Supplies</li></a>
+                        <a href="#search/weddings"><li className="tab">Weddings</li></a>
+                        <a href="#search/entertainment"><li className="tab">Entertainment</li></a>
+                        <a href="#search/home living"><li className="tab">Home Living</li></a>
+                        <a href="#search/kids baby"><li className="tab">Kids & Baby</li></a>
+                        <a href="#search/vintage"><li className="tab">Vintage</li></a>
+                        </ul>                  
+                    </header>                 
                 </div>
             )
 
@@ -103,11 +117,10 @@ function app() {
 
         render: function() {
             return (
-                <input onKeyDown={this._search} />
+                <input className="search-el" placeholder="Search for items or shops" onKeyDown={this._search} />
                 )
         }
     })
-
 
     var ListingsGrid = React.createClass({
 
@@ -144,6 +157,7 @@ function app() {
         var listingObj = this.props.listing
         //console.log(listingObj)
         var imgSrc = "./images/placeholder.png"
+        console.log(listingObj)
         if(listingObj.Images.length > 0) {
             imgSrc = listingObj.Images[0].url_170x135
         }
@@ -228,67 +242,66 @@ function app() {
 
      var EtsyRouter = Backbone.Router.extend({
 
-     routes: {
-         "home": "handleListView",
-         "details/:id": "handleDetailView",
-         "search/:keywords": "handleSearchView",
-          "*default": "handleListView"
-     },
+         routes: {
+             "home": "handleListView",
+             "details/:id": "handleDetailView",
+             "search/:keywords": "handleSearchView",
+              "*default": "handleListView"
+         },
 
-     handleListView: function() {
-     	this.multiModel = new ListModel()
-     	this.multiModel.fetch({
-     		dataType: "jsonp",
-            data: {
-            	includes: "Images,Shop",
-            	api_key: this.multiModel._apiKey
-        	}
+         handleListView: function() {
+         	this.multiModel.fetch({
+         		dataType: "jsonp",
+                data: {
+                	includes: "Images,Shop",
+                	api_key: this.multiModel._apiKey
+            	}
 
-     	})
-       //  promise.then(function(jsonData) {
-       //      console.log(jsonData)
-       // })
-     	
-     	DOM.render(<ListingView etsyData={this.multiModel}/>, document.querySelector('.container'))
-     },
+         	})
+           //  promise.then(function(jsonData) {
+           //      console.log(jsonData)
+           // })
+         	
+         	DOM.render(<ListingView etsyData={this.multiModel}/>, document.querySelector('.container'))
+         },
 
-     handleDetailView: function(listingId) {
-        var detailModel = new DetailModel()
-        //console.log(detailModel)
-        detailModel.url += listingId + ".js?"
-        //console.log(detailModel.url)
-        var promise = detailModel.fetch({
-             dataType: "jsonp",
-             data: {
-                 includes: "Images,Shop",
-                 api_key: detailModel._apiKey
-             }
-         })
-            // promise.then(function(jsonData) {
-            //     console.log(jsonData)
-            // })
-            DOM.render(<DetailView etsyData={detailModel}/>, document.querySelector('.container'))
+         handleDetailView: function(listingId) {
+            var detailModel = new DetailModel()
+            //console.log(detailModel)
+            detailModel.url += listingId + ".js?"
+            //console.log(detailModel.url)
+            var promise = detailModel.fetch({
+                 dataType: "jsonp",
+                 data: {
+                     includes: "Images,Shop",
+                     api_key: detailModel._apiKey
+                 }
+             })
+                // promise.then(function(jsonData) {
+                //     console.log(jsonData)
+                // })
+                DOM.render(<DetailView etsyData={detailModel}/>, document.querySelector('.container'))
 
-     },
+         },
 
-     handleSearchView: function(keywords) {
-        this.multiModel = new ListModel()
-        this.multiModel.fetch({
-             dataType: "jsonp",
-             data: {
-                 keywords: keywords,
-                 includes: "Images,Shop",
-                 api_key: this.multiModel._apiKey
-             }
-         })
-        DOM.render(<ListingView etsyData={this.multiModel}/>, document.querySelector('.container'))
-     },
+         handleSearchView: function(keywords) {
+            this.multiModel.fetch({
+                 dataType: "jsonp",
+                 data: {
+                     keywords: keywords,
+                     includes: "Images,Shop",
+                     api_key: this.multiModel._apiKey
+                 }
+             })
+            DOM.render(<ListingView etsyData={this.multiModel}/>, document.querySelector('.container'))
+         },
 
-     initialize: function() {
-        Backbone.history.start()
-	 }
+         initialize: function() {
+            this.multiModel = new ListModel()
+            Backbone.history.start()
+    	 }
 
- })
+     })
 
 	var router = new EtsyRouter()
 }	

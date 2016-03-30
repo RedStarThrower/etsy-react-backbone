@@ -35,7 +35,7 @@ import fetch from "isomorphic-fetch"
 
 import DOM from 'react-dom'
 import React, {Component} from 'react'
-import Backbone from 'backbone'
+import Backbone from 'bbfire'
 
 function app() {
     // start app
@@ -57,7 +57,7 @@ function app() {
     		return (
     			<div className="etsyContainer">
                     <Header />
-    				<ListingsGrid listingData={this.props} />
+    				<ListingsGrid listingData={this.props.etsyData} />
        			</div>
     		)
     	}
@@ -68,7 +68,7 @@ function app() {
         componentWillMount: function(){
             var self = this
             this.props.etsyData.on('sync',function() {self.forceUpdate()})
-            },
+        },
 
         render: function() {
             //console.log("rendering etsy app")
@@ -76,7 +76,25 @@ function app() {
             return (
                 <div className="etsyContainer">
                     <Header />
-                    <DetailPage detailData={this.props} />
+                    <DetailPage detailData={this.props.etsyData} />
+                </div>
+            )
+        }
+    })
+
+    var LoginView = React.createClass ({
+
+        _submitUsername: function(keyEvent) {
+            if (keyEvent.keyCode === 13) {
+                var username = keyEvent.target.value
+                this.props.handleUserSubmit(username)
+            }
+        },
+
+        render: function() {
+            return (
+                <div className = "loginContainer">
+                    <input onKeyDown={this._submitUsername} name="username"/>
                 </div>
             )
         }
@@ -124,23 +142,20 @@ function app() {
 
     var ListingsGrid = React.createClass({
 
-        _getDataJsx: function(resultsObj) {
-            //console.log(resultsObj)
-            var jsxArray = []
-            for (var prop in resultsObj) {
-                var component = <Listing key={resultsObj[prop].listing_id} listing={resultsObj[prop]}/>
-                jsxArray.push(component)
-            }
-        
-            //console.log(jsxArray)            
-            return jsxArray                 
+        _getDataJsx: function(listingModel, i) {
+            //console.log(listingModel)
+            return (
+                 <Listing key={i} listing={listingModel}/>
+             )
+                           
         },
 
     	render: function() {
             //console.log(this)
+            //console.log(this.props)
             return (
                 <div className="listingGrid">
-                    {this._getDataJsx(this.props.listingData.etsyData.attributes)}
+                    {this.props.listingData.map(this._getDataJsx)}
                 </div>
             )
       	}
@@ -149,7 +164,7 @@ function app() {
     var Listing = React.createClass({
 
         _triggerDetailView: function() {
-            location.hash = "details/" + this.props.listing.listing_id
+            location.hash = "details/" + this.props.listing.get('listing_id')
         },
 
         render: function() {
@@ -157,20 +172,23 @@ function app() {
         var listingObj = this.props.listing
         var imgSrc = "./images/placeholder.png"
         //console.log(listingObj)
-        if(listingObj.Images.length > 0) {
-            imgSrc = listingObj.Images[0].url_170x135
+        var Imgs = listingObj.get('Images')
+        if(Imgs instanceof Array && Imgs.length > 0) {
+            imgSrc = Imgs[0]['url_170x135']
         }
-        if(listingObj.state === "removed") {
-            return(<div></div>)
-        }
+
+        var shopName = ''
+        if (listingObj.get('Shop')) shopName = listingObj.get('Shop').shop_name
+            
             return(
-                <div className="listing">
+                <div className="listing">                    
                     <div className="home-image">
+                        <FaveButton />
                         <img onClick={this._triggerDetailView} src={imgSrc} />
                     </div>
-                    <div className="title-data"><p className="title">{listingObj.title}</p></div>
-                    <div className="seller-data"><p className="seller">{listingObj.Shop.shop_name}</p>
-                    <p className="price">${listingObj.price}</p>
+                    <div className="title-data"><p className="title">{listingObj.get('title')}</p></div>
+                    <div className="seller-data"><p className="seller">{shopName}</p>
+                    <p className="price">${listingObj.get('price')}</p>
                     </div>
                 </div>
             )
@@ -178,25 +196,19 @@ function app() {
         }
     })
 
-    var DetailPage = React.createClass({
+    var FaveButton = React.createClass({
+        render: function() {
+            return <button className="fav-button">{"\u2764"}</button>
+        }
+    })
 
-        _getDetailDataJsx: function(resultsObj) {
-            //console.log(resultsObj)
-            var jsxArray = []
-            for (var prop in resultsObj) {
-                var component = <Detail key={resultsObj[prop].listing_id} listing={resultsObj[prop]}/>
-                jsxArray.push(component)
-            }
-        
-            //console.log(jsxArray)            
-            return jsxArray   
-        },
+    var DetailPage = React.createClass({
 
         render: function() {
             //console.log(this)
             return (
                 <div className="detailContainer">
-                {this._getDetailDataJsx(this.props.detailData.etsyData.attributes)}
+                    <Detail listing={this.props.detailData}/>
                 </div>
             )
         }
@@ -208,28 +220,38 @@ function app() {
             //console.log(this)
             var detailObj = this.props.listing
             var imgSrc = "./images/placeholder.png"
-            if(detailObj.Images.length > 0) {
-                imgSrc = detailObj.Images[0].url_570xN
+            //console.log(listingObj)
+            var Imgs = detailObj.get('Images')
+
+            if (Imgs instanceof Array && Imgs.length > 0) {
+                imgSrc = Imgs[0]['url_570xN']
             }
+
+            var shopName = ''
+            if (detailObj.get('Shop')) shopName = detailObj.get('Shop').shop_name
 
             return(
                 <div className="detail-listing">
-                    <div className="detail-title-data"><p className="detail-title">{detailObj.title}</p></div>
+                    <div className="detail-title-data"><FaveButton /><p className="detail-title">{detailObj.get('title')}</p></div>
                     <div className="detail-image"><img src={imgSrc}></img></div>
-                    <div className="detail-description-data"><p className="detail-description">{detailObj.description}</p></div>
-                    <div className="detail-seller-data"><p className="detail-seller">{detailObj.Shop.shop_name}</p>
-                        <p className="detail-price">{detailObj.price}</p></div>              
+                    <div className="detail-description-data"><p className="detail-description">{detailObj.get('description')}</p></div>
+                    <div className="detail-seller-data"><p className="detail-seller">{shopName}</p>
+                        <p className="detail-price">{detailObj.get('price')}</p></div>              
                 </div>
             )
         }
     })
 
-    var ListModel = Backbone.Model.extend({
+    var ListCollection = Backbone.Collection.extend({
     	_apiKey: "aavnvygu0h5r52qes74x9zvo",
     	url: "https://openapi.etsy.com/v2/listings/active.js?",
 
         parse: function(rawJSON) {
             return rawJSON.results
+        },
+
+        defaults: {
+            favorite: false
         }
     })
 
@@ -238,7 +260,11 @@ function app() {
          url: "https://openapi.etsy.com/v2/listings/",
 
          parse: function(rawJSON) {
-            return rawJSON.results
+            return rawJSON.results[0]
+        },
+
+        defaults: {
+            favorite: false
         }
     }) 
 
@@ -247,24 +273,23 @@ function app() {
          routes: {
              "home": "handleListView",
              "details/:id": "handleDetailView",
-             "search/:keywords": "handleSearchView",
-              "*default": "handleListView"
+             "search/:keywords": "handleSearchView"
          },
 
          handleListView: function() {
-         	this.multiModel.fetch({
+         	this.listingCollection.fetch({
          		dataType: "jsonp",
                 data: {
                 	includes: "Images,Shop",
-                	api_key: this.multiModel._apiKey
+                	api_key: this.listingCollection._apiKey
             	}
 
          	})
            //  promise.then(function(jsonData) {
            //      console.log(jsonData)
            // })
-         	
-         	DOM.render(<ListingView etsyData={this.multiModel}/>, document.querySelector('.container'))
+         	var coll = this.listingCollection
+         	DOM.render(<ListingView etsyData={coll}/>, document.querySelector('.container'))
          },
 
          handleDetailView: function(listingId) {
@@ -282,24 +307,26 @@ function app() {
                 // promise.then(function(jsonData) {
                 //     console.log(jsonData)
                 // })
+    
                 DOM.render(<DetailView etsyData={detailModel}/>, document.querySelector('.container'))
 
          },
 
          handleSearchView: function(keywords) {
-            this.multiModel.fetch({
+            this.listingCollection.fetch({
                  dataType: "jsonp",
                  data: {
                      keywords: keywords,
                      includes: "Images,Shop",
-                     api_key: this.multiModel._apiKey
+                     api_key: this.listingCollection._apiKey
                  }
              })
-            DOM.render(<ListingView etsyData={this.multiModel}/>, document.querySelector('.container'))
+            var coll = this.listingCollection
+            DOM.render(<ListingView etsyData={coll}/>, document.querySelector('.container'))
          },
 
          initialize: function() {
-            this.multiModel = new ListModel()
+            this.listingCollection = new ListCollection()
             Backbone.history.start()
     	 }
 

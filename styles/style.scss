@@ -145,6 +145,14 @@ body {
     margin-bottom: 0;
     background-color: white;
     border-bottom: 1px solid #CFCBC8;
+
+        a {
+            color: #e4685d;
+            text-decoration: none;
+            font-family: sans-serif, Arial;
+            margin: 20px;
+            font-size: 16px;
+        }
 }
 
 .nav-header {
@@ -170,7 +178,7 @@ ul {
     background: transparent;
     margin-right: 12px;
     cursor: pointer;
-    margin-left: 3%;
+    margin-left: 1%;
     line-height: 50px;
     text-decoration: none;
 }
@@ -223,12 +231,12 @@ ul {
     .fav-button {
         position: relative;
         margin: 7px;
-        background-color:#e4685d;
+        background-color:white;
         border-radius: 50%;
-        border:3px solid #ffffff;
+        border:3px solid #FFE3CD;
         display:inline-block;
         cursor:pointer;
-        color:#ffffff;
+        color:#FFE3CD;
         font-family:Arial;
         font-size:15px;
         padding:3px 9px;
@@ -296,12 +304,12 @@ ul {
     .fav-button {
         position: relative;
         margin-bottom: 10px;
-        background-color:#e4685d;
+        background-color:white;
         border-radius: 50%;
-        border:3px solid #e4685d;
+        border:3px solid #FFE3CD;
         display:inline-block;
         cursor:pointer;
-        color:#ffffff;
+        color: #FFE3CD;
         font-family:Arial;
         font-size:20px;
         padding:2px 9px;

@@ -56,7 +56,7 @@ var DetailPage = React.createClass({
                     <div className="detail-image"><img src={imgSrc}></img></div>
                     <div className="detail-description-data"><p className="detail-description">{detailObj.get('description')}</p></div>
                     <div className="detail-seller-data"><p className="detail-seller">{shopName}</p>
-                        <p className="detail-price">{detailObj.get('price')}</p></div>              
+                        <p className="detail-price">${detailObj.get('price')}</p></div>              
                 </div>
             )
         }

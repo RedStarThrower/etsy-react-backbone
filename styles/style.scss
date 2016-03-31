@@ -133,7 +133,6 @@ body {
 
 body {
     margin: 0;
-    width: 100%;
     font-size: 12px;
     font-family: "Graphik Web", "Arial", "Helvetica", sans-serif;
     background-color: #E7E9E8;
@@ -141,7 +140,6 @@ body {
 
 .main-header {
     position: relative;
-    margin: 0;
     width: 100%;
     text-align: left;
     margin-bottom: 0;
@@ -152,7 +150,7 @@ body {
             color: #e4685d;
             text-decoration: none;
             font-family: sans-serif, Arial;
-            margin: 20px;
+            padding: 20px;
             font-size: 16px;
         }
 }
@@ -162,14 +160,13 @@ body {
     width: 100%;
     text-align: center;
     margin-top: 0;
-    margin: 0;
     background-color: white;
     border-bottom: 1px solid #CFCBC8;
     border-top: 1px solid #CFCBC8;
 }
 
 ul {
-    margin: 0;
+    padding: 0;
     max-width: 200ch;
 }
 
